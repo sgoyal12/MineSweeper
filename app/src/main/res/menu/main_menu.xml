@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item  android:id="@+id/RESET"
+        android:title="RESET"
+        android:icon="@drawable/download"
+        app:showAsAction="always"/>
+
+    <item android:id="@+id/Preset" android:title="Preset">
+        <menu> <group android:checkableBehavior="all" android:id="@+id/pre">
+            <item
+                android:id="@+id/X6"
+                android:title="6X6" />
+            <item android:title="8X8" android:id="@+id/X8"/>
+            <item android:title="10X10" android:id="@+id/X10"/>
+        </group>
+        </menu>
+
+    </item>
+    <item android:id="@+id/difficulty" android:title="Difficulty">
+        <menu> <group android:checkableBehavior="all" android:id="@+id/diff">
+            <item
+                android:id="@+id/easy"
+                android:title="EASY" />
+            <item android:title="MEDIUM" android:id="@+id/medium"/>
+            <item android:title="HIGH" android:id="@+id/high"/>
+        </group>
+        </menu>
+
+    </item>
+</menu>
