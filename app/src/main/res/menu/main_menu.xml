@@ -7,7 +7,7 @@
         app:showAsAction="always"/>
 
     <item android:id="@+id/Preset" android:title="Preset">
-        <menu> <group android:checkableBehavior="all" android:id="@+id/pre">
+        <menu> <group android:checkableBehavior="single" android:id="@+id/pre">
             <item
                 android:id="@+id/X6"
                 android:title="6X6" />
@@ -18,7 +18,7 @@
 
     </item>
     <item android:id="@+id/difficulty" android:title="Difficulty">
-        <menu> <group android:checkableBehavior="all" android:id="@+id/diff">
+        <menu> <group android:checkableBehavior="single" android:id="@+id/diff">
             <item
                 android:id="@+id/easy"
                 android:title="EASY" />

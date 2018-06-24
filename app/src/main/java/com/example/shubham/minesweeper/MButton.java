@@ -10,7 +10,7 @@ import android.widget.Button;
 
 public class MButton extends android.support.v7.widget.AppCompatButton {
     private int mines=0;
-    private int x,y;
+    public int x,y;
     public boolean revealStatus=false,flag=false;
 
 private int mineStatus=MainActivity.Mine_Not_Set;
@@ -82,14 +82,15 @@ private int mineStatus=MainActivity.Mine_Not_Set;
         {
             for (j=y-1;j<y+2;j++)
             {
-                if(i>=0&&i<nrow&&j>=0&&j<ncol&&board[i][j].mineStatus==MainActivity.Mine_Not_Set&&!(i==x&&j==y)){
-                    int m=board[i][j].getMines();
-                    if(m!=MainActivity.Mine_Set&&mines==0) {
+                if(i>=0&&i<nrow&&j>=0&&j<ncol&&board[i][j].mineStatus==MainActivity.Mine_Not_Set&&!(i==x&&j==y)) {
+                    int m = board[i][j].getMines();
+                    if (m != MainActivity.Mine_Set && m == 0) {
                         board[i][j].setEnabled(false);
-                        revealStatus=true;
-                        board[i][j].reveal(board,nrow,ncol);
-                    }
-                    else if(m!=MainActivity.Mine_Set&& mines!=0)
+                        revealStatus = true;
+                        board[i][j].reveal(board, nrow, ncol);
+                        }
+
+                    else if(m!=MainActivity.Mine_Set&& m!=0)
                     {
                         board[i][j].setText(""+m);
                         revealStatus=true;

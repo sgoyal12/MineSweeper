@@ -5,6 +5,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.SubMenu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -24,7 +25,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public MButton[][] board;
     public static final int Mine_Set=-1,Mine_Not_Set=-2;
     public static final int INCOMPLETE=1,PLAYER_WON=2,PLAYER_LOST=3;
-
+    public static boolean k=true;
+    private static int x1,y1;
      static int currentStatus;
      static int diff=10;
 
@@ -37,6 +39,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     }
     public boolean onCreateOptionsMenu(Menu menu) {
+//        MenuItem menuItem,menuItem1;
+//        SubMenu subMenu,subMenu1;
+//        menuItem=menu.findItem(R.id.Preset);
+//        menuItem1=menu.findItem(R.id.difficulty);
+//        subMenu=menuItem.getSubMenu();
+//        subMenu1=menuItem1.getSubMenu();
+//        subMenu.setGroupCheckable(R.id.pre,true,true);
+//        subMenu1.setGroupCheckable(R.id.diff,true,true);
         getMenuInflater().inflate(R.menu.main_menu,menu);
 
         return true;
@@ -44,6 +54,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+
         if(item.getItemId()==R.id.RESET)
             setBoard();
         else if(item.getItemId()==R.id.X6)
@@ -93,6 +104,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void setBoard()
     {   board=new MButton[nrow][ncol];
         rows=new ArrayList<>();
+        k=true;
         currentStatus=INCOMPLETE;
         rootLayout.removeAllViews();
         for(int i=0;i<nrow;i++)
@@ -127,54 +139,94 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 board[i][j].setXY(i,j);
             }
         }
+
+    }
+    public void setupMines(){
         Random random=new Random(),random1=new Random();
-        for(int i=0;i<(ncol*nrow)/diff;)
+        for(int p=0;p<(ncol*nrow)/diff;)
         {
             int x,y;
+            boolean z=true;
             x=random.nextInt(nrow);
             y=random1.nextInt(ncol);
-            if(board[x][y].getMineStatus()!=Mine_Set)
+            for(int i=x1-1;i<x1+2;i++)
+            {
+                for (int j=y1-1;j<y1+2;j++)
+                {
+                    if(x==i&&y==j)
+                        z=false;
+                }
+            }
+            if(board[x][y].getMineStatus()!=Mine_Set&&z)
             {
                 board[x][y].setMines(board,nrow,ncol);
-                i++;
+                p++;
             }
         }
     }
-
     @Override
     public void onClick(View v) {
+        MButton button = (MButton) v;
+        if(k)
+        {
+           k=false;
+           x1=button.x;
+           y1=button.y;
+           setupMines();
+        }
         if(currentStatus==INCOMPLETE) {
-            MButton button = (MButton) v;
+
             button.reveal(board, nrow, ncol);
             updateStatus();
-            if(currentStatus==PLAYER_LOST)
-            {
-                Toast.makeText(MainActivity.this,"You Lost",Toast.LENGTH_SHORT).show();
-            }
-            else if(currentStatus==PLAYER_WON){
-                Toast.makeText(MainActivity.this,"You Won",Toast.LENGTH_SHORT).show();
-            }
+            checkStatus();
         }
 
+    }
+
+    private void checkStatus() {
+        if(currentStatus==PLAYER_LOST)
+        {
+            Toast.makeText(MainActivity.this,"You Lost",Toast.LENGTH_SHORT).show();
+        }
+        else if(currentStatus==PLAYER_WON){
+            Toast.makeText(MainActivity.this,"You Won",Toast.LENGTH_SHORT).show();
+        }
     }
 
     public void updateStatus() {
         boolean abc=true;
+        int a=0;
+        for(int i=0;i<nrow;i++) {
+            for (int j = 0; j < ncol; j++) {
+                if (!board[i][j].revealStatus && board[i][j].notMine()) {
+                    abc = false;
+                }
+
+            }
+        }
         for(int i=0;i<nrow;i++)
         {
             for(int j=0;j<ncol;j++)
             {
-                if(!board[i][j].revealStatus&&board[i][j].notMine())
+                if(board[i][j].flag)
                 {
-                    abc=false;
+                    if(board[i][j].getMineStatus()==Mine_Set)
+                    {
+                      a++;
+                    }
+                    else{
+                        a=0;
+                        break;
+                    }
                 }
-
             }
-            if(abc) {
+        }
+        if(a==nrow*ncol/diff)
+            currentStatus=PLAYER_WON;
+        if(abc) {
                 currentStatus = PLAYER_WON;
             }
         }
-    }
 
     @Override
     public boolean onLongClick(View v) {
@@ -183,6 +235,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
            if (!button.flag) {
                button.flag = true;
                button.setBackgroundResource(R.drawable.flags);
+               updateStatus();
+               checkStatus();
 
            } else {
                button.flag = false;
